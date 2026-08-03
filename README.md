@@ -23,11 +23,25 @@ der App-Hülle bleibt, müssen Manifest und Service Worker auf der Wurzel liegen
 | `icon-maskable-512.png` | Android-Variante mit Sicherheitsrand |
 | `apple-touch-icon.png` | 180×180, iOS ignoriert die Manifest-Icons |
 | `favicon.png` | Browser-Tab |
+| `logo.svg` | Vereinswappen als Vektor, Quelle aller Icons |
 | `index.html` | Weiterleitung auf `/ToolsUebersicht/` |
 
-Die Icons sind gezeichnet, nicht aus dem Vereinswappen skaliert — das liegt nur in
-223 × 211 px vor und würde bei Icon-Größe matschen. Erzeugt mit GDI+, Vereinsblau
-`#1a56a0`.
+## Icons
+
+Alle Icons zeigen seit 2026-08-03 das **echte Vereinswappen**, gerendert aus
+`logo.svg` auf Vereinsblau `#1a56a0` (= `theme_color`). Bis dahin war es ein mit
+GDI+ gezeichneter Platzhalter (weißes Schild, blaues „SC"), weil das Wappen nur
+als 223 × 211-px-Rastergrafik vorlag und bei Icon-Größe matschte.
+
+`logo.svg` ist aus der EPS-Vorlage des Vereins erzeugt (Adobe Illustrator, reiner
+Vektor: 51 Flächen, zwei Farben — Weiß und `#282562`). Wer die Icons neu bauen
+will, rendert aus dieser Datei, nicht aus einem PNG.
+
+`icon-maskable-512.png` zeigt das Wappen auf 60 % der Kantenlänge. Das ist keine
+gegriffene Zahl: Androids Safe Zone ist ein Kreis mit 80 % Durchmesser, und für
+ein Wappen im Seitenverhältnis 0,875 gilt
+`√((0,875·h/2)² + (h/2)²) = 0,664·h ≤ 0,4·512` — also `h ≤ 308 px`. Bei mehr
+schneidet der Kreiszuschnitt die oberen Schildecken ab.
 
 ## ⚠️ Der Service Worker darf nicht cachen
 
