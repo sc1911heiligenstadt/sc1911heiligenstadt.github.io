@@ -35,10 +35,16 @@ self.addEventListener("push", (event) => {
   const optionen = {
     body: daten.text || "Es gibt etwas Neues.",
     icon: "/icon-192.png?v=2",
-    // Kein "badge": das waere das kleine Symbol in der Android-Statusleiste und
-    // wird dort als reine weisse Silhouette gezeichnet. Aus dem Wappen wuerde
-    // ein unfoermiger Klecks. Lieber das Standardsymbol des Browsers, bis es
-    // ein eigenes einfarbiges Badge-Icon gibt.
+    // Das kleine Symbol in der Android-Statusleiste. Ohne dieses Feld zeigt
+    // Chrome dort eine generische Glocke.
+    //
+    // ⚠️ Android zeichnet das Badge als reine weisse Silhouette: alle
+    // sichtbaren Pixel werden weiss, jedes Detail geht verloren. Deshalb NICHT
+    // das Wappen (51 Flaechen, zwei Farben -- daraus wuerde ein Klecks),
+    // sondern nur seine aeussere Kontur. Erzeugt mit badge-rendern.ps1 aus
+    // demselben logo.svg; wer es ersetzt, muss die Form bei 24 px pruefen,
+    // denn so klein steht sie in der Statusleiste.
+    badge: "/badge-96.png?v=1",
     data: { ziel: daten.ziel || "/ToolsUebersicht/" }
     // Bewusst KEIN "tag": mit Tag ersetzt jede neue Nachricht die vorherige.
     // Drei zugewiesene Aufgaben sollen aber drei Meldungen sein, nicht eine.
