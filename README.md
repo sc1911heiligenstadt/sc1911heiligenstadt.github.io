@@ -1,6 +1,6 @@
-# tecko1985.github.io
+# sc1911heiligenstadt.github.io
 
-Wurzelverzeichnis von `https://tecko1985.github.io/`. Enthält **keine Anwendung** —
+Wurzelverzeichnis von `https://sc1911heiligenstadt.github.io/`. Enthält **keine Anwendung** —
 nur die Dateien, die auf der Wurzel liegen müssen, damit sich die Vereinswerkzeuge
 als App auf dem Startbildschirm ablegen lassen.
 
