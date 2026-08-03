@@ -1,6 +1,10 @@
-# Rendert die aeussere Wappenkontur aus logo.svg als einfarbiges Badge-Icon.
+# Rendert den aeusseren Wappenumriss aus logo.svg als einfarbiges Badge-Icon.
 # Fuer ein Android-Badge zaehlt NUR die Silhouette: das System zeichnet alle
-# sichtbaren Pixel weiss. Deshalb die Kontur, nicht das ganze Wappen.
+# sichtbaren Pixel weiss. Deshalb allein der aeussere Umriss statt der 51
+# Innenflaechen des Wappens -- und deshalb FillPath (Zeile unten), also die
+# geschlossene Schildform: eine gezeichnete Linie waere bei 24 px, der Groesse
+# in der Statusleiste, nur noch Grauschleier. Ergebnis sind ~55 % gedeckte
+# Pixel, die Form bleibt als Schild erkennbar.
 param([int]$Groesse = 96, [int]$Rand = 6, [string]$Ziel)
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing

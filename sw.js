@@ -41,9 +41,15 @@ self.addEventListener("push", (event) => {
     // ⚠️ Android zeichnet das Badge als reine weisse Silhouette: alle
     // sichtbaren Pixel werden weiss, jedes Detail geht verloren. Deshalb NICHT
     // das Wappen (51 Flaechen, zwei Farben -- daraus wuerde ein Klecks),
-    // sondern nur seine aeussere Kontur. Erzeugt mit badge-rendern.ps1 aus
-    // demselben logo.svg; wer es ersetzt, muss die Form bei 24 px pruefen,
-    // denn so klein steht sie in der Statusleiste.
+    // sondern allein sein aeusserer Umriss -- und der als GEFUELLTE Schildform,
+    // nicht als Linie: bei 24 px loest sich eine duenne Kontur auf. Erzeugt mit
+    // badge-rendern.ps1 aus demselben logo.svg; wer es ersetzt, muss die Form
+    // in dieser Groesse pruefen, denn so klein steht sie in der Statusleiste.
+    //
+    // ⚠️ Ein Push-Ereignis weckt den Service Worker auf, loest aber KEINEN
+    // Update-Check aus. Wer dieses Feld aendert, sieht die Wirkung erst,
+    // nachdem die App einmal geoeffnet wurde -- bis dahin laeuft auf dem Geraet
+    // der alte Worker weiter und zeigt die generische Glocke.
     badge: "/badge-96.png?v=1",
     data: { ziel: daten.ziel || "/ToolsUebersicht/" }
     // Bewusst KEIN "tag": mit Tag ersetzt jede neue Nachricht die vorherige.
