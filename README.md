@@ -18,12 +18,16 @@ der App-Hülle bleibt, müssen Manifest und Service Worker auf der Wurzel liegen
 | Datei | Zweck |
 |---|---|
 | `manifest.json` | `scope: "/"` über die ganze Flotte, `start_url` zeigt auf `/ToolsUebersicht/` |
-| `sw.js` | Service Worker, **bewusst leer** — siehe Warnung unten |
+| `sw.js` | Service Worker: **cacht nichts** (siehe Warnung unten), zeigt Push-Nachrichten an |
 | `icon-192.png`, `icon-512.png` | Startbildschirm-Icons |
 | `icon-maskable-512.png` | Android-Variante mit Sicherheitsrand |
 | `apple-touch-icon.png` | 180×180, iOS ignoriert die Manifest-Icons |
 | `favicon.png` | Browser-Tab |
-| `logo.svg` | Vereinswappen als Vektor, Quelle aller Icons |
+| `logo.svg` | Vereinswappen als Vektor, Quelle der farbigen Icons |
+| `logo-monochrom.png` | Wappen einfarbig, Quelle der beiden Push-Bilder |
+| `badge-96.png` | Symbol in der Android-Statusleiste |
+| `push-icon-192.png` | Bild in der aufgeklappten Nachricht |
+| `push-bilder-rendern.ps1` | erzeugt die beiden Push-Bilder reproduzierbar |
 | `index.html` | Weiterleitung auf `/ToolsUebersicht/` |
 
 ## Icons
@@ -42,6 +46,37 @@ gegriffene Zahl: Androids Safe Zone ist ein Kreis mit 80 % Durchmesser, und für
 ein Wappen im Seitenverhältnis 0,875 gilt
 `√((0,875·h/2)² + (h/2)²) = 0,664·h ≤ 0,4·512` — also `h ≤ 308 px`. Bei mehr
 schneidet der Kreiszuschnitt die oberen Schildecken ab.
+
+## Die Bilder der Push-Nachricht
+
+Eine Push-Nachricht zeigt **zwei verschiedene** Bilder, und sie folgen
+gegensätzlichen Regeln:
+
+`push-icon-192.png` steht neben Titel und Text der aufgeklappten Meldung und
+wird farbtreu dargestellt. Chrome schneidet es rund zu, deshalb hat es ringsum
+Rand — ohne den fiele die Schildspitze weg.
+
+`badge-96.png` steht in der Statusleiste. ⚠️ **Android färbt dort alle sichtbaren
+Pixel weiß** und liest nur die Transparenz — Farben und Binnenzeichnung gehen
+restlos verloren. Deshalb ist es nicht das ganze Wappen: dessen Schriftbänder
+(„1. SC 1911", „HEILBAD HEILIGENSTADT") lösen sich bei 24 px in Grauschleier
+auf. Es bleiben die gefüllte Schildform und das Rad als **Aussparung** — der
+Kontrast zwischen Fläche und Loch trägt auch in dieser Größe.
+
+Beide entstehen aus `logo-monochrom.png` über `push-bilder-rendern.ps1`, nicht
+aus `logo.svg`. Grund: das SVG ist zweifarbig separiert — die linke Schildhälfte
+ist hell mit dunklen Formen, die rechte umgekehrt. Das Rad ist darin mal
+gefüllter Pfad und mal Aussparung, aus seinen 51 Pfaden lässt sich „nur das Rad"
+nicht herausgreifen. Das Skript nimmt stattdessen die **linke** Radhälfte der
+gerasterten Vorlage, wo das Material durchgehend dunkel auf hell liegt, und
+spiegelt sie — das Rad ist achsensymmetrisch. Seine Lage steht als Anteil der
+Wappenfläche im Skript, gemessen über ein Radialprofil.
+
+⚠️ Wer ein Push-Bild austauscht, **prüft das Badge in 24 px** — das Skript legt
+dafür eine Vorschau daneben — und zieht den `?v=`-Buster in `sw.js` mit.
+
+⚠️ Eine Änderung wirkt auf dem Gerät erst nach dem nächsten Öffnen der App: ein
+Push weckt den Service Worker zwar, löst aber **keinen** Update-Check aus.
 
 ## ⚠️ Der Service Worker darf nicht cachen
 

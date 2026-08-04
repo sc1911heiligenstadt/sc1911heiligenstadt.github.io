@@ -33,24 +33,28 @@ self.addEventListener("push", (event) => {
 
   const titel = daten.titel || "SC 1911";
   const optionen = {
-    body: daten.text || "Es gibt etwas Neues.",
-    icon: "/icon-192.png?v=2",
+    // Das Bild neben Titel und Text der aufgeklappten Meldung. Bewusst eine
+    // eigene Datei und NICHT icon-192.png: das steht in manifest.json und ist
+    // zugleich das App-Icon auf dem Startbildschirm -- dort bleibt das farbige
+    // Wappen auf Vereinsblau, die Nachricht traegt das monochrome. Chrome
+    // schneidet es rund zu, deshalb hat es ringsum Rand.
+    icon: "/push-icon-192.png?v=1",
     // Das kleine Symbol in der Android-Statusleiste. Ohne dieses Feld zeigt
     // Chrome dort eine generische Glocke.
     //
     // ⚠️ Android zeichnet das Badge als reine weisse Silhouette: alle
-    // sichtbaren Pixel werden weiss, jedes Detail geht verloren. Deshalb NICHT
-    // das Wappen (51 Flaechen, zwei Farben -- daraus wuerde ein Klecks),
-    // sondern allein sein aeusserer Umriss -- und der als GEFUELLTE Schildform,
-    // nicht als Linie: bei 24 px loest sich eine duenne Kontur auf. Erzeugt mit
-    // badge-rendern.ps1 aus demselben logo.svg; wer es ersetzt, muss die Form
-    // in dieser Groesse pruefen, denn so klein steht sie in der Statusleiste.
+    // sichtbaren Pixel werden weiss, jedes Detail geht verloren. Es ist
+    // deshalb NICHT das ganze Wappen -- die beiden Schriftbaender loesen sich
+    // bei 24 px in Grauschleier auf --, sondern die gefuellte Schildform mit
+    // dem Rad als Aussparung. Der Kontrast zwischen Flaeche und Loch traegt
+    // auch in dieser Groesse. Erzeugt mit push-bilder-rendern.ps1; wer es
+    // ersetzt, muss die Form in 24 px pruefen, denn so klein steht sie da.
     //
     // ⚠️ Ein Push-Ereignis weckt den Service Worker auf, loest aber KEINEN
     // Update-Check aus. Wer dieses Feld aendert, sieht die Wirkung erst,
     // nachdem die App einmal geoeffnet wurde -- bis dahin laeuft auf dem Geraet
-    // der alte Worker weiter und zeigt die generische Glocke.
-    badge: "/badge-96.png?v=1",
+    // der alte Worker weiter und zeigt den alten Stand.
+    badge: "/badge-96.png?v=2",
     data: { ziel: daten.ziel || "/ToolsUebersicht/" }
     // Bewusst KEIN "tag": mit Tag ersetzt jede neue Nachricht die vorherige.
     // Drei zugewiesene Aufgaben sollen aber drei Meldungen sein, nicht eine.
