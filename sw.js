@@ -36,9 +36,13 @@ self.addEventListener("push", (event) => {
     // Das Bild neben Titel und Text der aufgeklappten Meldung. Bewusst eine
     // eigene Datei und NICHT icon-192.png: das steht in manifest.json und ist
     // zugleich das App-Icon auf dem Startbildschirm -- dort bleibt das farbige
-    // Wappen auf Vereinsblau, die Nachricht traegt das monochrome. Chrome
-    // schneidet es rund zu, deshalb hat es ringsum Rand.
-    icon: "/push-icon-192.png?v=1",
+    // Wappen auf hellem Vereinsblau, die Nachricht traegt seit dem 2026-08-07
+    // das weisse Wappen auf der Logofarbe #282562. Chrome schneidet es rund zu,
+    // deshalb hat es ringsum Rand -- ohne den faellt die Schildspitze weg.
+    //
+    // Quelle ist logo-weiss.svg, erzeugt mit push-icon-rendern.html. Das
+    // PowerShell-Skript kann diese Datei NICHT erzeugen: GDI+ rendert kein SVG.
+    icon: "/push-icon-192.png?v=2",
     // Das kleine Symbol in der Android-Statusleiste. Ohne dieses Feld zeigt
     // Chrome dort eine generische Glocke.
     //

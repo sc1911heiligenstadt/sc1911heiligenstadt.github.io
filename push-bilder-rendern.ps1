@@ -1,11 +1,21 @@
-# Rendert die beiden Bilder der Push-Nachricht aus dem monochromen Wappen.
+# Rendert das Badge der Push-Nachricht aus dem monochromen Wappen.
 #
 #   badge-96.png       Symbol in der Android-Statusleiste -- nur Silhouette
-#   push-icon-192.png  Bild neben Titel und Text der aufgeklappten Meldung
+#
+# ⚠️ Seit dem 2026-08-07 erzeugt dieses Skript push-icon-192.png NICHT mehr.
+# Dessen Quelle ist jetzt der Vektor logo-weiss.svg, und GDI+ kann kein SVG
+# rendern -- dafuer gibt es push-icon-rendern.html, die im Browser laeuft. Das
+# Skript laedt die Datei am Ende nur noch fuer die Vorschau von Platte.
+# Wer den Icon-Teil hier wieder einbaut, ueberschreibt das weisse Wappen auf
+# Logofarbe lautlos mit der alten Fassung auf dunklem Grau.
+#
+# Das Badge bleibt hier, weil es die GERASTERTE Vorlage braucht: aus dem
+# separierten Vektor laesst sich "nur das Rad" nicht herausgreifen (Begruendung
+# unten und in CLAUDE.md).
 #
 # ⚠️ Ueberschreibt NICHT icon-192.png. Das steht in manifest.json und ist
 # zugleich das App-Icon auf dem Startbildschirm -- es bleibt das farbige Wappen
-# auf Vereinsblau. Nur die Push-Nachricht bekommt diese beiden Dateien.
+# auf Vereinsblau.
 #
 # Quelle ist logo-monochrom.png, nicht logo.svg: das SVG ist zweifarbig
 # separiert (linke Schildhaelfte hell mit dunklen Formen, rechte Haelfte
@@ -242,30 +252,27 @@ $badge.Save($zielBadge, [System.Drawing.Imaging.ImageFormat]::Png)
 "Geschrieben: $zielBadge ($G x $G)"
 
 # ---------------------------------------------------------------------------
-# 2) PUSH-ICON -- Wappen weiss auf dunklem Grund
+# 2) PUSH-ICON -- wird hier NICHT mehr erzeugt, nur fuer die Vorschau geladen.
 #
-# Hier zaehlen die Farben wirklich, das Bild wird nicht eingefaerbt. Chrome
-# schneidet es rund zu, deshalb reichlich Rand und ein vollflaechiger Grund --
-# sonst faellt die Schildspitze weg.
+# Es entsteht seit dem 2026-08-07 aus logo-weiss.svg ueber
+# push-icon-rendern.html (weisses Wappen auf der Logofarbe #282562). GDI+
+# rendert kein SVG, deshalb kann dieses Skript die Datei nicht herstellen --
+# und darf sie erst recht nicht ueberschreiben.
 # ---------------------------------------------------------------------------
-$I = 192; $IRAND = 22
-$inutz = $I - 2 * $IRAND
-$si = [Math]::Min($inutz / $iw, $inutz / $ih)
-$iwz = [int][Math]::Round($iw * $si); $ihz = [int][Math]::Round($ih * $si)
-$ixz = [int][Math]::Round(($I - $iwz) / 2); $iyz = [int][Math]::Round(($I - $ihz) / 2)
-
-$icon = New-Object System.Drawing.Bitmap($I, $I, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
-$gi = [System.Drawing.Graphics]::FromImage($icon)
-$gi.Clear([System.Drawing.Color]::FromArgb(255, 26, 28, 35))
-$gi.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
-$gi.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
-$qi = New-Object System.Drawing.Rectangle($ix, $iy, $iw, $ih)
-$zi = New-Object System.Drawing.Rectangle($ixz, $iyz, $iwz, $ihz)
-$gi.DrawImage($wappen, $zi, $qi, [System.Drawing.GraphicsUnit]::Pixel)
-$gi.Dispose()
 $zielIcon = Join-Path $Ordner "push-icon-192.png"
-$icon.Save($zielIcon, [System.Drawing.Imaging.ImageFormat]::Png)
-"Geschrieben: $zielIcon ($I x $I)"
+if (Test-Path $zielIcon) {
+  $iq = [System.Drawing.Image]::FromFile($zielIcon)
+  $icon = New-Object System.Drawing.Bitmap($iq.Width, $iq.Height, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+  $gi = [System.Drawing.Graphics]::FromImage($icon)
+  $gi.DrawImage($iq, 0, 0, $iq.Width, $iq.Height)
+  $gi.Dispose(); $iq.Dispose()
+  "Gelesen:     $zielIcon (nur fuer die Vorschau, nicht neu erzeugt)"
+} else {
+  # Ohne die Datei bleibt die rechte Haelfte der Vorschau leer -- besser als
+  # ein Abbruch, denn das Badge ist zu diesem Zeitpunkt schon geschrieben.
+  $icon = New-Object System.Drawing.Bitmap(192, 192, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+  "⚠️ $zielIcon fehlt -- Vorschau zeigt nur das Badge."
+}
 
 # ---------------------------------------------------------------------------
 # Vorschau -- weiss auf transparent ist auf hellem Grund unsichtbar. Diese
