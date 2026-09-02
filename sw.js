@@ -42,7 +42,7 @@ self.addEventListener("push", (event) => {
     //
     // Quelle ist logo-weiss.svg, erzeugt mit push-icon-rendern.html. Das
     // PowerShell-Skript kann diese Datei NICHT erzeugen: GDI+ rendert kein SVG.
-    icon: "/push-icon-192.png?v=2",
+    icon: "/push-icon-192.png?v=1.0",
     // Das kleine Symbol in der Android-Statusleiste. Ohne dieses Feld zeigt
     // Chrome dort eine generische Glocke.
     //
@@ -58,7 +58,7 @@ self.addEventListener("push", (event) => {
     // Update-Check aus. Wer dieses Feld aendert, sieht die Wirkung erst,
     // nachdem die App einmal geoeffnet wurde -- bis dahin laeuft auf dem Geraet
     // der alte Worker weiter und zeigt den alten Stand.
-    badge: "/badge-96.png?v=2",
+    badge: "/badge-96.png?v=1.0",
     data: { ziel: daten.ziel || "/ToolsUebersicht/" }
     // Bewusst KEIN "tag": mit Tag ersetzt jede neue Nachricht die vorherige.
     // Drei zugewiesene Aufgaben sollen aber drei Meldungen sein, nicht eine.
