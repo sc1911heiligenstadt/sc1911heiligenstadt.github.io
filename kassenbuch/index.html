@@ -14,6 +14,23 @@
   // liefert die installierte PWA weiter die gecachte alte Fassung aus und
   // sieht nie ein Update. Danach pfadgleich weiterspringen; replace() statt
   // href, damit der Zurueck-Knopf nicht in eine Endlosschleife laeuft.
+  //
+  // ⚠️ NUR den Worker dieses Pfades abmelden (Bugfix 2026-09-05).
+  // getRegistrations() ist ORIGIN-weit, nicht pfadweit -- es liefert jede
+  // Registrierung dieser Origin. Diese Seite liegt auf
+  // sc1911heiligenstadt.github.io, also derselben Origin wie die ganze Flotte:
+  // /sw.js mit Scope "/" (daran haengt das Push-Abo saemtlicher Apps), dazu die
+  // Worker von Materialliste, spielertool-test, familien-quartett und spiele/*.
+  // rs.map(r => r.unregister()) meldete sie ALLE ab -- wer die alte
+  // Kassenbuch-Adresse aus einem Lesezeichen oeffnete, verlor auf diesem Geraet
+  // still saemtliche Push-Nachrichten (ein Push-Abo lebt an der Registrierung
+  // und wird nur per Knopfdruck neu angelegt) und die Offline-Faehigkeit der
+  // vier eigenstaendigen PWAs.
+  //
+  // ⚠️ Auch NICHT getRegistration("/kassenbuch/") verwenden: das faellt bei
+  // fehlendem /kassenbuch/-Worker auf den "/"-Worker der Flotte zurueck und
+  // meldet dann genau den ab, den es zu schuetzen gilt. Deshalb ueber den
+  // Scope filtern.
   (function () {
     var ziel = "https://tecko1985.github.io" + location.pathname + location.search + location.hash;
     function weiter() { location.replace(ziel); }
@@ -22,7 +39,11 @@
     function einmal() { if (!abgeschlossen) { abgeschlossen = true; weiter(); } }
     setTimeout(einmal, 1500);
     navigator.serviceWorker.getRegistrations()
-      .then(function (rs) { return Promise.all(rs.map(function (r) { return r.unregister(); })); })
+      .then(function (rs) {
+        return Promise.all(rs
+          .filter(function (r) { return /\/kassenbuch\/$/.test(r.scope); })
+          .map(function (r) { return r.unregister(); }));
+      })
       .then(einmal, einmal);
   })();
 </script>
